@@ -17,7 +17,7 @@ import '../widgets/menu.dart';
 ///   https://pub.dev/packages/carousel_slider/example
 ///
 class EditorScreen extends StatefulWidget {
-  const EditorScreen({Key? key, required this.entry}) : super(key: key);
+  const EditorScreen({super.key, required this.entry});
   static const routeName = '/editor';
 
   final Entry entry;
@@ -25,7 +25,7 @@ class EditorScreen extends StatefulWidget {
   //final FocusNode focusNode;
 
   @override
-  _EditorScreenState createState() => _EditorScreenState();
+  State<EditorScreen> createState() => _EditorScreenState();
 }
 
 class _EditorScreenState extends State<EditorScreen> {
@@ -102,10 +102,12 @@ class _EditorScreenState extends State<EditorScreen> {
                       ? null
                       : box.localToGlobal(Offset.zero) & box.size;
 
-                  await Share.share(
-                    shareText,
-                    subject: labelKey(widget.entry.dtKey),
-                    sharePositionOrigin: origin,
+                  await SharePlus.instance.share(
+                    ShareParams(
+                      text: shareText,
+                      subject: labelKey(widget.entry.dtKey),
+                      sharePositionOrigin: origin,
+                    ),
                   );
                 },
               );

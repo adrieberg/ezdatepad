@@ -7,11 +7,11 @@ import '../widgets/menu.dart';
 //import '../widgets/numeric_step.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
   static const routeName = '/settings';
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
@@ -24,6 +24,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> _updateColorScheme(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('colorScheme', value);
+    if (!mounted) return;
+
+    setState(() {
+      _selectColorScheme = value;
+      gPrefColorScheme = value;
+      if (value == 'dark') {
+        App.of(context).changeTheme(ThemeMode.dark);
+      } else if (value == 'light') {
+        App.of(context).changeTheme(ThemeMode.light);
+      } else {
+        App.of(context).changeTheme(ThemeMode.system);
+      }
+    });
+  }
+
+  Future<void> _updateActionButton(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('actionButton', value);
+    if (!mounted) return;
+
+    setState(() {
+      _selectActionButton = value;
+      gPrefActionButton = value;
+    });
   }
 
   @override
@@ -115,56 +144,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(40.0, 0, 0, 0),
-                          child: Column(
-                            children: <Widget>[
-                              RadioListTile<String>(
-                                title: const Text('System'),
-                                value: 'system',
-                                groupValue: _selectColorScheme,
-                                onChanged: (value) async {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.setString('colorScheme', 'system');
-                                  setState(() {
-                                    _selectColorScheme = value!;
-                                    gPrefColorScheme = value;
-                                    App.of(context)
-                                        .changeTheme(ThemeMode.system);
-                                  });
-                                },
-                              ),
-                              RadioListTile<String>(
-                                title: const Text('Dark mode'),
-                                value: 'dark',
-                                groupValue: _selectColorScheme,
-                                onChanged: (value) async {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.setString('colorScheme', 'dark');
-                                  setState(() {
-                                    _selectColorScheme = value!;
-                                    gPrefColorScheme = value;
-                                    App.of(context).changeTheme(ThemeMode.dark);
-                                  });
-                                },
-                              ),
-                              RadioListTile<String>(
-                                title: const Text('Light mode'),
-                                value: 'light',
-                                groupValue: _selectColorScheme,
-                                onChanged: (value) async {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.setString('colorScheme', 'light');
-                                  setState(() {
-                                    _selectColorScheme = value!;
-                                    gPrefColorScheme = value;
-                                    App.of(context)
-                                        .changeTheme(ThemeMode.light);
-                                  });
-                                },
-                              ),
-                            ],
+                          child: RadioGroup<String>(
+                            groupValue: _selectColorScheme,
+                            onChanged: (value) {
+                              if (value != null) {
+                                _updateColorScheme(value);
+                              }
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                RadioListTile<String>(
+                                  title: const Text('System'),
+                                  value: 'system',
+                                ),
+                                RadioListTile<String>(
+                                  title: const Text('Dark mode'),
+                                  value: 'dark',
+                                ),
+                                RadioListTile<String>(
+                                  title: const Text('Light mode'),
+                                  value: 'light',
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -216,37 +218,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(40.0, 0, 0, 0),
-                          child: Column(
-                            children: <Widget>[
-                              RadioListTile<String>(
-                                title: const Text('Create/edit date entry'),
-                                value: 'date',
-                                groupValue: _selectActionButton,
-                                onChanged: (value) async {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.setString('actionButton', 'date');
-                                  setState(() {
-                                    _selectActionButton = value!;
-                                    gPrefActionButton = value;
-                                  });
-                                },
-                              ),
-                              RadioListTile<String>(
-                                title: const Text('Create/edit time entry'),
-                                value: 'time',
-                                groupValue: _selectActionButton,
-                                onChanged: (value) async {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.setString('actionButton', 'time');
-                                  setState(() {
-                                    _selectActionButton = value!;
-                                    gPrefActionButton = value;
-                                  });
-                                },
-                              ),
-                            ],
+                          child: RadioGroup<String>(
+                            groupValue: _selectActionButton,
+                            onChanged: (value) {
+                              if (value != null) {
+                                _updateActionButton(value);
+                              }
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                RadioListTile<String>(
+                                  title: const Text('Create/edit date entry'),
+                                  value: 'date',
+                                ),
+                                RadioListTile<String>(
+                                  title: const Text('Create/edit time entry'),
+                                  value: 'time',
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],

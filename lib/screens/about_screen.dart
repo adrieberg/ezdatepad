@@ -8,7 +8,7 @@ import '../widgets/menu.dart';
 import '../widgets/utils.dart';
 
 class AboutScreen extends StatelessWidget {
-  const AboutScreen({Key? key}) : super(key: key);
+  const AboutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +85,7 @@ class AboutScreen extends StatelessWidget {
 
 
 class MiscOssLicenseAll extends StatelessWidget {
-  const MiscOssLicenseAll({Key? key}) : super(key: key);
+  const MiscOssLicenseAll({super.key});
 
   static Future<List<Package>> loadLicenses() async {
     // merging non-dart dependency list using LicenseRegistry.
@@ -167,7 +167,7 @@ class MiscOssLicenseAll extends StatelessWidget {
 class MiscOssLicenseSingle extends StatelessWidget {
   final Package package;
 
-  const MiscOssLicenseSingle({Key? key, required this.package}) : super(key: key);
+  const MiscOssLicenseSingle({super.key, required this.package});
 
   String _bodyText() {
     return package.license!.split('\n').map((line) {

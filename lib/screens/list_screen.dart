@@ -17,11 +17,11 @@ String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
     length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
 class ListScreen extends StatefulWidget {
-  const ListScreen({Key? key}) : super(key: key);
+  const ListScreen({super.key});
   static const routeName = '/list';
 
   @override
-  _ListScreenState createState() => _ListScreenState();
+  State<ListScreen> createState() => _ListScreenState();
 }
 
 class _ListScreenState extends State<ListScreen> {

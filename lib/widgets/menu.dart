@@ -76,7 +76,7 @@ Widget mainMenuRight(BuildContext context, {String currentItem = ''}) {
   );
 }
 
-void mainMenuNavigate(BuildContext context, String i) {
+Future<void> mainMenuNavigate(BuildContext context, String i) async {
   String newKey = '';
 
   if (i == menuItemEditCurrentDateTime) {
@@ -107,57 +107,57 @@ void mainMenuNavigate(BuildContext context, String i) {
   }
 
   if (i == menuItemEditSelectTime) {
-    popupSelectTime(context).then((dynamic value) {
-      if (value != null) {
-        newKey = value;
+    final dynamic value = await popupSelectTime(context);
+    if (!context.mounted) return;
+    if (value != null) {
+      newKey = value;
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EditorScreen(
-              entry: Provider.of<Archive>(context, listen: false)
-                  .append(newKey, ''),
-            ),
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EditorScreen(
+            entry:
+                Provider.of<Archive>(context, listen: false).append(newKey, ''),
           ),
-        );
-      }
-    });
+        ),
+      );
+    }
   }
 
   if (i == menuItemEditSelectDate) {
-    popupSelectDate(context).then((dynamic value) {
-      if (value != null) {
-        newKey = value;
+    final dynamic value = await popupSelectDate(context);
+    if (!context.mounted) return;
+    if (value != null) {
+      newKey = value;
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EditorScreen(
-              entry: Provider.of<Archive>(context, listen: false)
-                  .append(newKey, ''),
-            ),
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EditorScreen(
+            entry:
+                Provider.of<Archive>(context, listen: false).append(newKey, ''),
           ),
-        );
-      }
-    });
+        ),
+      );
+    }
   }
 
   if (i == menuItemEditSelectDateTime) {
-    popupSelectDateTime(context).then((dynamic value) {
-      if (value != null) {
-        newKey = value;
+    final dynamic value = await popupSelectDateTime(context);
+    if (!context.mounted) return;
+    if (value != null) {
+      newKey = value;
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EditorScreen(
-              entry: Provider.of<Archive>(context, listen: false)
-                  .append(newKey, ''),
-            ),
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EditorScreen(
+            entry:
+                Provider.of<Archive>(context, listen: false).append(newKey, ''),
           ),
-        );
-      }
-    });
+        ),
+      );
+    }
   } else if (i == menuItemList) {
     Navigator.pushNamed(context, '/list');
   } else if (i == menuItemSettings) {

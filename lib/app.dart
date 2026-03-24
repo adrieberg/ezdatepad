@@ -27,17 +27,16 @@ class App extends StatefulWidget {
       required this.summaryLines,
       required this.summaryNewlines,
       required this.allowEmpty,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   @override
-  State<App> createState() => _AppState();
+  State<App> createState() => AppState();
 
-  static _AppState of(BuildContext context) =>
-      context.findAncestorStateOfType<_AppState>()!;
+  static AppState of(BuildContext context) =>
+      context.findAncestorStateOfType<AppState>()!;
 }
 
-class _AppState extends State<App> {
+class AppState extends State<App> {
   late Archive archive;
   ThemeMode _themeMode = (gPrefColorScheme == "system")
       ? ThemeMode.system

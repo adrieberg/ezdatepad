@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class GrabbingWidget extends StatelessWidget {
-  const GrabbingWidget({Key? key}) : super(key: key);
+  const GrabbingWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class GrabbingWidget extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             blurRadius: 25,
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
           ),
         ],
       ),
