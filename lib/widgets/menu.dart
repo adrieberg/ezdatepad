@@ -71,6 +71,7 @@ Widget mainMenuRight(BuildContext context, {String currentItem = ''}) {
         ];
       },
       icon: const Icon(Icons.more_vert),
+      onOpened: () => ScaffoldMessenger.of(context).clearSnackBars(),
       onSelected: (i) => mainMenuNavigate(context, i),
   );
 }

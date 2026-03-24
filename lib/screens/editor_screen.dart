@@ -87,9 +87,11 @@ class _EditorScreenState extends State<EditorScreen> {
                 onPressed: () async {
                   final shareText = myController.text.trim();
                   if (shareText.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    final messenger = ScaffoldMessenger.of(context);
+                    messenger.clearSnackBars();
+                    messenger.showSnackBar(
                       const SnackBar(
-                        content: Text('Nothing to share yet.'),
+                        content: Text('Nothing to share.'),
                       ),
                     );
                     return;
@@ -113,6 +115,7 @@ class _EditorScreenState extends State<EditorScreen> {
       floatingActionButton: FloatingActionButton(
         key: const Key('overview'),
         onPressed: () {
+          ScaffoldMessenger.of(context).clearSnackBars();
           Provider.of<Archive>(context, listen: false).store();
           FocusScope.of(context).unfocus();
           Navigator.pushNamedAndRemoveUntil(context, '/list', (r) => false);
