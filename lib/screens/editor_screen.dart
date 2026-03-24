@@ -81,13 +81,33 @@ class _EditorScreenState extends State<EditorScreen> {
           // If current item is 'today' disable the menu option. If it is any
           // other day leave the menu option active
           actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.ios_share),
-              onPressed: () {
-                Share.share(widget.entry.value.trim(),
-                    subject: labelKey(widget.entry.dtKey));
-              },
-            ),
+            Builder(builder: (shareContext) {
+              return IconButton(
+                icon: const Icon(Icons.ios_share),
+                onPressed: () async {
+                  final shareText = myController.text.trim();
+                  if (shareText.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Nothing to share yet.'),
+                      ),
+                    );
+                    return;
+                  }
+
+                  final box = shareContext.findRenderObject() as RenderBox?;
+                  final origin = box == null
+                      ? null
+                      : box.localToGlobal(Offset.zero) & box.size;
+
+                  await Share.share(
+                    shareText,
+                    subject: labelKey(widget.entry.dtKey),
+                    sharePositionOrigin: origin,
+                  );
+                },
+              );
+            }),
             mainMenuRight(context),
           ]),
       floatingActionButton: FloatingActionButton(
