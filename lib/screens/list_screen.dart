@@ -63,7 +63,6 @@ class _ListScreenState extends State<ListScreen> {
               child: TextField(
                 controller: _searchController,
                 maxLength: 40,
-                onChanged: (String value) => setState(() {}),
                 decoration: (_searchController.text.isNotEmpty)
                     ? InputDecoration(
                         counterText: '',
@@ -84,7 +83,6 @@ class _ListScreenState extends State<ListScreen> {
                               .onSecondaryContainer,
                           onPressed: () {
                             _searchController.clear();
-                            setState(() {});
                           },
                         ),
                         suffixIconConstraints:
@@ -113,7 +111,6 @@ class _ListScreenState extends State<ListScreen> {
                                 color: Theme.of(context).colorScheme.secondary,
                                 onPressed: () {
                                   _searchController.clear();
-                                  setState(() {});
                                 },
                               )
                             : Container(),
@@ -144,7 +141,7 @@ class _ListScreenState extends State<ListScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => EditorScreen(
-                entry: Provider.of<Archive>(context, listen: true)
+                entry: Provider.of<Archive>(context, listen: false)
                     .append(newKey, ''),
               ),
             ),

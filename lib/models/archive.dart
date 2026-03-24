@@ -26,6 +26,7 @@ class Archive extends ChangeNotifier {
   List<Entry> searchResults = [];
 
   static String lastKey = '';
+  Future<void> _pendingStore = Future.value();
 
   factory Archive.fromJson(Map<String, dynamic> json) =>
       _$ArchiveFromJson(json);
@@ -37,10 +38,28 @@ class Archive extends ChangeNotifier {
 
     final file = await _localFile;
     if (await file.exists()) {
-      Archive temp = _$ArchiveFromJson(json.decode(await file.readAsString()));
-      id = temp.id;
-      name = temp.name;
-      entries = temp.entries;
+      final content = await file.readAsString();
+
+      if (content.trim().isEmpty) {
+        id = const Uuid().v4();
+        name = 'archive';
+        entries = [];
+        return;
+      }
+
+      try {
+        final decoded = json.decode(content) as Map<String, dynamic>;
+        Archive temp = _$ArchiveFromJson(decoded);
+        id = temp.id;
+        name = temp.name;
+        entries = temp.entries;
+      } on FormatException catch (e) {
+        debugPrint('Invalid archive JSON, creating backup: $e');
+        await _backupCorruptArchive(file, content);
+        id = const Uuid().v4();
+        name = 'archive';
+        entries = [];
+      }
     } else {
       id = const Uuid().v4();
       name = 'archive';
@@ -50,6 +69,7 @@ class Archive extends ChangeNotifier {
 
   Future<File> writeJsonFile() async {
     final file = await _localFile;
+    final tempFile = File('${file.path}.tmp');
 
     debugPrint('write JSON file');
     
@@ -60,7 +80,18 @@ class Archive extends ChangeNotifier {
       await file.writeAsString(initialContent);
     }
 */
-    return file.writeAsString(json.encode(_$ArchiveToJson(this)));
+    final data = json.encode(_$ArchiveToJson(this));
+    await tempFile.writeAsString(data, flush: true);
+    if (await file.exists()) {
+      await file.delete();
+    }
+    return tempFile.rename(file.path);
+  }
+
+  Future<void> _backupCorruptArchive(File file, String content) async {
+    final ts = DateTime.now().toIso8601String().replaceAll(':', '-');
+    final backup = File('${file.parent.path}/archive_corrupt_$ts.json');
+    await backup.writeAsString(content, flush: true);
   }
 
   Future<String> get _localPath async {
@@ -78,7 +109,14 @@ class Archive extends ChangeNotifier {
     searchResults = [];
   }
 
-  void store() => writeJsonFile().then((value) => refresh());
+  void store() {
+    _pendingStore = _pendingStore
+        .catchError((_) {})
+        .then((_) async {
+      await writeJsonFile();
+      refresh();
+    });
+  }
 
   Entry createEntry(String? key, String? value) =>
       Entry(const Uuid().v4(), key ?? currentDTKey(), value ?? '');
@@ -106,12 +144,12 @@ class Archive extends ChangeNotifier {
     if (searchResults.isNotEmpty) {
       firstKey = searchResults
           .firstWhere(
-              (element) => element.dtKey.substring(1, 8) == key.substring(1, 8))
+            (element) => element.dtKey.substring(0, 8) == key.substring(0, 8))
           .dtKey;
     } else {
       firstKey = entries
           .firstWhere(
-              (element) => element.dtKey.substring(1, 8) == key.substring(1, 8))
+            (element) => element.dtKey.substring(0, 8) == key.substring(0, 8))
           .dtKey;
     }
     if (firstKey == key) {
@@ -125,12 +163,12 @@ class Archive extends ChangeNotifier {
     if (searchResults.isNotEmpty) {
       lastKey = searchResults
           .lastWhere(
-              (element) => element.dtKey.substring(1, 8) == key.substring(1, 8))
+            (element) => element.dtKey.substring(0, 8) == key.substring(0, 8))
           .dtKey;
     } else {
       lastKey = entries
           .lastWhere(
-              (element) => element.dtKey.substring(1, 8) == key.substring(1, 8))
+            (element) => element.dtKey.substring(0, 8) == key.substring(0, 8))
           .dtKey;
     }
     if (lastKey == key) {

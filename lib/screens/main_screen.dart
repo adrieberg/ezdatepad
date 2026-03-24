@@ -15,18 +15,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   _MainScreenState();
 
-  late TextEditingController _searchController;
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController = TextEditingController()
-      ..addListener(() {
-        setState(() {});
-      });
-    _searchController.text = '';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

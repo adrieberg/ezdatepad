@@ -30,7 +30,7 @@ class EditorScreen extends StatefulWidget {
 
 class _EditorScreenState extends State<EditorScreen> {
   final myController = TextEditingController();
-  FocusNode focusNode = FocusNode();
+  final FocusNode focusNode = FocusNode();
 
   _EditorScreenState();
 
@@ -39,26 +39,6 @@ class _EditorScreenState extends State<EditorScreen> {
     super.initState();
     debugPrint('start editor ');
 
-    focusNode.addListener(() {
-      if ((focusNode.hasFocus == false) &&
-          widget.entry.value != myController.text) {
-        debugPrint("text focus lost and updated");
-      }
-      Provider.of<Archive>(context, listen: false).update(
-          Entry(widget.entry.id, widget.entry.dtKey, myController.text.trim()));
-      Provider.of<Archive>(context, listen: false).store();
-    });
-  }
-
-  @override
-  void dispose() {
-    debugPrint('close editor ');
-    myController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     if (widget.entry.value == '') {
       myController.text = Provider.of<Archive>(context, listen: false)
           .get(widget.entry.dtKey)
@@ -67,6 +47,34 @@ class _EditorScreenState extends State<EditorScreen> {
     } else {
       myController.text = widget.entry.value.trim();
     }
+
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        return;
+      }
+
+      final archive = Provider.of<Archive>(context, listen: false);
+      final text = myController.text.trim();
+      final currentValue = archive.get(widget.entry.dtKey).value.trim();
+
+      if (text != currentValue) {
+        debugPrint("text focus lost and updated");
+        archive.update(Entry(widget.entry.id, widget.entry.dtKey, text));
+        archive.store();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    debugPrint('close editor ');
+    focusNode.dispose();
+    myController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           centerTitle: false,
