@@ -82,8 +82,8 @@ class _EditorScreenState extends State<EditorScreen>
   @override
   void dispose() {
     debugPrint('close editor ');
-    _saveText();
     WidgetsBinding.instance.removeObserver(this);
+    _saveText();
     focusNode.dispose();
     myController.dispose();
     super.dispose();
