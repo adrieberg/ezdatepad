@@ -28,7 +28,8 @@ class EditorScreen extends StatefulWidget {
   State<EditorScreen> createState() => _EditorScreenState();
 }
 
-class _EditorScreenState extends State<EditorScreen> {
+class _EditorScreenState extends State<EditorScreen>
+    with WidgetsBindingObserver {
   final myController = TextEditingController();
   final FocusNode focusNode = FocusNode();
 
@@ -37,6 +38,7 @@ class _EditorScreenState extends State<EditorScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     debugPrint('start editor ');
 
     if (widget.entry.value == '') {
@@ -53,21 +55,35 @@ class _EditorScreenState extends State<EditorScreen> {
         return;
       }
 
-      final archive = Provider.of<Archive>(context, listen: false);
-      final text = myController.text.trim();
-      final currentValue = archive.get(widget.entry.dtKey).value.trim();
-
-      if (text != currentValue) {
-        debugPrint("text focus lost and updated");
-        archive.update(Entry(widget.entry.id, widget.entry.dtKey, text));
-        archive.store();
-      }
+      _saveText();
     });
+  }
+
+  void _saveText() {
+    final archive = Provider.of<Archive>(context, listen: false);
+    final text = myController.text.trim();
+    final currentValue = archive.get(widget.entry.dtKey).value.trim();
+
+    if (text != currentValue) {
+      debugPrint("text updated and stored");
+      archive.update(Entry(widget.entry.id, widget.entry.dtKey, text));
+      archive.store();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      _saveText();
+    }
   }
 
   @override
   void dispose() {
     debugPrint('close editor ');
+    WidgetsBinding.instance.removeObserver(this);
+    _saveText();
     focusNode.dispose();
     myController.dispose();
     super.dispose();
@@ -126,7 +142,7 @@ class _EditorScreenState extends State<EditorScreen> {
         key: const Key('overview'),
         onPressed: () {
           ScaffoldMessenger.of(context).clearSnackBars();
-          Provider.of<Archive>(context, listen: false).store();
+          _saveText();
           FocusScope.of(context).unfocus();
           Navigator.pushNamedAndRemoveUntil(context, '/list', (r) => false);
         },
