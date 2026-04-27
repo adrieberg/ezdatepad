@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -37,7 +38,7 @@ class _EditorScreenState extends State<EditorScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint('start editor ');
+    if (kDebugMode) debugPrint('start editor ');
 
     if (widget.entry.value == '') {
       myController.text = Provider.of<Archive>(context, listen: false)
@@ -58,7 +59,7 @@ class _EditorScreenState extends State<EditorScreen> {
       final currentValue = archive.get(widget.entry.dtKey).value.trim();
 
       if (text != currentValue) {
-        debugPrint("text focus lost and updated");
+        if (kDebugMode) debugPrint("text focus lost and updated");
         archive.update(Entry(widget.entry.id, widget.entry.dtKey, text));
         archive.store();
       }
@@ -67,7 +68,7 @@ class _EditorScreenState extends State<EditorScreen> {
 
   @override
   void dispose() {
-    debugPrint('close editor ');
+    if (kDebugMode) debugPrint('close editor ');
     focusNode.dispose();
     myController.dispose();
     super.dispose();

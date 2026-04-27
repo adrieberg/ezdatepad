@@ -138,6 +138,7 @@
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
+				A7D4E1B83C6F4A219F0B7C11 /* Generate objective_c dSYM */,
 				6E85E7F0949702DC4D316973 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -213,6 +214,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+		};
+		A7D4E1B83C6F4A219F0B7C11 /* Generate objective_c dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate objective_c dSYM";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif [ \"$CONFIGURATION\" != \"Release\" ] && [ \"$CONFIGURATION\" != \"Profile\" ]; then\n  exit 0\nfi\nFRAMEWORK_BIN=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/objective_c.framework/objective_c\"\nif [ ! -f \"$FRAMEWORK_BIN\" ]; then\n  exit 0\nfi\nmkdir -p \"${DWARF_DSYM_FOLDER_PATH}\"\n/usr/bin/xcrun dsymutil \"$FRAMEWORK_BIN\" -o \"${DWARF_DSYM_FOLDER_PATH}/objective_c.framework.dSYM\"\n";
+			showEnvVarsInLog = 0;
 		};
 		6E85E7F0949702DC4D316973 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

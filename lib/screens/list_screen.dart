@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
 import '../globals.dart';
@@ -35,12 +36,12 @@ class _ListScreenState extends State<ListScreen> {
         setState(() {});
       });
     _searchController.text = '';
-    debugPrint('start list screen');
+    if (kDebugMode) debugPrint('start list screen');
   }
 
   @override
   void dispose() {
-    debugPrint('close list screen');
+    if (kDebugMode) debugPrint('close list screen');
     _searchController.dispose();
     super.dispose();
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -49,13 +50,13 @@ class AppState extends State<App> {
     archive = Archive(id: const Uuid().v4(), name: "archive", entries: []);
     archive.load();
 
-    debugPrint('start $appTitle');
+    if (kDebugMode) debugPrint('start $appTitle');
     super.initState();
   }
 
   @override
   void dispose() {
-    debugPrint('close $appTitle');
+    if (kDebugMode) debugPrint('close $appTitle');
     archive.store();
     super.dispose();
   }

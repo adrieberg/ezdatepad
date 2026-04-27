@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -34,7 +35,7 @@ class Archive extends ChangeNotifier {
   Map<String, dynamic> toJson() => _$ArchiveToJson(this);
 
   Future<void> readJsonFile() async {
-    debugPrint('read JSON file ');
+    if (kDebugMode) debugPrint('read JSON file ');
 
     final file = await _localFile;
     if (await file.exists()) {
@@ -54,7 +55,7 @@ class Archive extends ChangeNotifier {
         name = temp.name;
         entries = temp.entries;
       } on FormatException catch (e) {
-        debugPrint('Invalid archive JSON, creating backup: $e');
+        if (kDebugMode) debugPrint('Invalid archive JSON, creating backup: $e');
         await _backupCorruptArchive(file, content);
         id = const Uuid().v4();
         name = 'archive';
@@ -71,7 +72,7 @@ class Archive extends ChangeNotifier {
     final file = await _localFile;
     final tempFile = File('${file.path}.tmp');
 
-    debugPrint('write JSON file');
+    if (kDebugMode) debugPrint('write JSON file');
     
 /*    if (!await file.exists()) {
       // read the file from assets first and create the local file with its contents
@@ -231,7 +232,7 @@ class Archive extends ChangeNotifier {
 
   /// Order the list
   void sort() {
-    debugPrint('sort list ');
+    if (kDebugMode) debugPrint('sort list ');
 
     /// Only for sorting the list the entry keys are padded on the right
     /// with a 9, so that the entries with a shorter key will get sorted
@@ -263,7 +264,7 @@ class Archive extends ChangeNotifier {
 
 /*  /// Order the list
   void sort() {
-    debugPrint('sort list ');
+    if (kDebugMode) debugPrint('sort list ');
 
     /// Only for sorting the list the entry keys are padded on the right
     /// with a 9, so that the entries with a shorter key will get sorted
